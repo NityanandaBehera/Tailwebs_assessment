@@ -1,0 +1,105 @@
+{% extends 'base.html' %} {% block content %}
+<nav class="navbar">
+  <div class="navbar-container">
+    <a href="/" class="navbar-brand">Teacher Portal</a>
+    <div class="navbar-links">
+      <a href="/">Home</a>
+      <a href="/logout/">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="">
+    <h2>Welcome, {{ user.username }}</h2>
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search by name or subject"
+      onkeyup="filterTable()"
+    />
+
+    <table id="studentTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Subject</th>
+          <th>Marks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+        <tr>
+          <td>{{ student.name }}</td>
+          <td>{{ student.subject }}</td>
+          <td>{{ student.marks }}</td>
+          <td>
+            <button
+              onclick="openEditModal('{{ student.id }}', '{{ student.name }}', '{{ student.subject }}', '{{ student.marks }}')"
+            >
+              Edit
+            </button>
+            <button
+              onclick="confirmDelete('{% url 'delete_student' student.id %}')"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      {% if students.has_previous %}
+      <a href="?page={{ students.previous_page_number }}">Previous</a>
+      {% endif %}
+
+      <span
+        >Page {{ students.number }} of {{ students.paginator.num_pages }}</span
+      >
+
+      {% if students.has_next %}
+      <a href="?page={{ students.next_page_number }}">Next</a>
+      {% endif %}
+    </div>
+
+    <button id="openModalBtn" onclick="openAddModal()">Add Student</button>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div id="studentModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <form id="studentForm" method="POST" action="{% url 'add_student' %}">
+      {% csrf_token %}
+      <input type="hidden" name="student_id" id="studentId" />
+      <label for="name">Name:</label>
+      <input type="text" name="name" id="studentName" required />
+
+      <label for="subject">Subject:</label>
+      <input type="text" name="subject" id="studentSubject" required />
+
+      <label for="marks">Marks:</label>
+      <input type="number" name="marks" id="studentMarks" required />
+
+      <button type="submit">Save</button>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeDeleteModal()">&times;</span>
+    <p>Are you sure you want to delete this student?</p>
+    <div class="modal-actions">
+      <button onclick="proceedDelete()">Yes</button>
+      <button onclick="closeDeleteModal()">No</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+*.egg
+*.log
+
+# Environment
+.env
+env/
+
+*.env
+
+# Django specific
+db.sqlite3
+*.sqlite3
+media/
+staticfiles/
+
+# VS Code
+.vscode/
+
+# Migrations
+**/migrations/*.py
+**/migrations/*.pyc
+!**/migrations/__init__.py

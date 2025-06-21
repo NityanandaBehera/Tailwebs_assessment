@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/static/static/styles.css" />
+  </head>
+  <body>
+    <form method="POST">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Save</button>
+    </form>
+  </body>
+</html>
