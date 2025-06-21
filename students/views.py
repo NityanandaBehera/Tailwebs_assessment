@@ -38,7 +38,7 @@ def logout_view(request):
 @login_required
 def home(request):
     query = request.GET.get('search')
-    student_list = Student.objects.filter(teacher=request.user)
+    student_list = Student.objects.filter(teacher=request.user).order_by('-id')
     if query:
         student_list = student_list.filter(name__icontains=query)
     paginator = Paginator(student_list, 10)  
