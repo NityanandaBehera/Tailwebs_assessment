@@ -203,3 +203,22 @@ th, td {
     color: red;
     margin-bottom: 10px;
 }
+
+.alert-container {
+  max-width: 600px;
+  margin: 1rem auto;
+  padding: 0 1rem;
+}
+.alert {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  color: #fff;
+}
+.alert.success {
+  background-color: #4caf50;
+}
+.alert.error {
+  background-color: #f44336;
+}
+

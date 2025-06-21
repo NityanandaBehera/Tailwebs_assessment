@@ -6,6 +6,7 @@ from .models import Student
 from .forms import StudentForm, RegisterForm
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.contrib import messages
 
 
 def login_view(request):
@@ -53,14 +54,29 @@ def add_student(request):
             name = form.cleaned_data['name']
             subject = form.cleaned_data['subject']
             marks = form.cleaned_data['marks']
-            student, created = Student.objects.get_or_create(
-                name=name, subject=subject, teacher=request.user,
-                defaults={'marks': marks}
-            )
-            if not created:
+            student = Student.objects.filter(
+                name=name,
+                subject=subject,
+                teacher=request.user
+            ).first()
+
+            if student:
+                # Student exists, update marks
                 student.marks += marks
                 student.save()
+                messages.success(request, f"{name}'s marks updated successfully.")
+            else:
+                # Student does not exist, create a new one
+                Student.objects.create(
+                    name=name,
+                    subject=subject,
+                    marks=marks,
+                    teacher=request.user
+                )
+                messages.success(request, f"New student {name} added successfully.")
             return redirect('home')
+        else:
+            messages.error(request, "Form is invalid. Please correct the errors.")
     else:
         form = StudentForm()
     return render(request, 'student_form.html', {'form': form})
@@ -72,7 +88,10 @@ def edit_student(request, student_id):
         form = StudentForm(request.POST, instance=student)
         if form.is_valid():
             form.save()
+            messages.success(request, f"{student.name}'s details updated successfully.")
             return redirect('home')
+        else:
+            messages.error(request, "Failed to update student. Please correct the errors.")
     else:
         form = StudentForm(instance=student)
     return render(request, 'student_form.html', {'form': form})
@@ -80,5 +99,7 @@ def edit_student(request, student_id):
 @login_required
 def delete_student(request, student_id):
     student = get_object_or_404(Student, id=student_id, teacher=request.user)
+    student_name = student.name
     student.delete()
+    messages.success(request, f"Student '{student_name}' has been deleted.")
     return redirect('home')
